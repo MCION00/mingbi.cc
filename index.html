@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>$mingbi</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .money {
+            position: absolute;
+            width: 100px; /* 放大一倍 */
+            height: auto;
+            pointer-events: none;
+        }
+        .flame {
+            position: absolute;
+            width: 60px;
+            height: auto;
+            animation: burn 0.8s ease-out forwards;
+        }
+        @keyframes burn {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.5); }
+        }
+        .content {
+            position: absolute;
+            top: 60%; /* 文字下移 */
+            width: 100%;
+        }
+        a {
+            color: yellow;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        /* 抖动动画 */
+        @keyframes shake {
+            0% { transform: translate(-50%, -50%) translateX(0px) translateY(0px); }
+            25% { transform: translate(-50%, -50%) translateX(-2px) translateY(-2px); }
+            50% { transform: translate(-50%, -50%) translateX(2px) translateY(2px); }
+            75% { transform: translate(-50%, -50%) translateX(-2px) translateY(2px); }
+            100% { transform: translate(-50%, -50%) translateX(0px) translateY(0px); }
+        }
+        .center-image {
+            position: absolute;
+            top: 30%; /* 图片上移 */
+            left: 50%;
+            width: 500px; /* 放大 2.5 倍 */
+            height: auto;
+            animation: shake 0.2s infinite; /* 让图片持续轻微抖动 */
+            transform: translate(-50%, -50%);
+        }
+        
+        /* 适配手机端自动转换竖屏布局 */
+        @media screen and (max-width: 768px) {
+            body {
+                transform: rotate(0deg);
+                width: 100vw;
+                height: 100vh;
+            }
+            .center-image {
+                width: 80vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" autoplay loop>
+        <source src="music.mp3" type="audio/mpeg">  <!-- 替换为你的背景音乐文件 -->
+        您的浏览器不支持音频播放。
+    </audio>
+    
+    <img src="center-image.png" class="center-image" />  <!-- 替换为你的图片 -->
+    
+    <div class="content">
+        <h1>test</h1>
+        <p>test</p>
+        <a href="#">点击购买</a>
+    </div>
+    
+    <script>
+        const moneyImages = ["money1.png", "money2.png", "money3.png", "money4.png", "money5.png"]; // 替换为你的钱的图片素材
+        
+        function createMoney() {
+            const money = document.createElement("img");
+            money.src = moneyImages[Math.floor(Math.random() * moneyImages.length)]; // 随机选择钱的图片
+            money.classList.add("money");
+            document.body.appendChild(money);
+            
+            const startLeft = Math.random() * window.innerWidth;
+            const duration = Math.random() * 3 + 2; // 2到5秒
+            
+            money.style.left = `${startLeft}px`;
+            money.style.top = `-50px`;
+            money.style.opacity = Math.random() * 0.5 + 0.5;
+            
+            const animation = money.animate([
+                { transform: `translateY(0px) rotate(${Math.random() * 360}deg)` },
+                { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)` }
+            ], {
+                duration: duration * 1000,
+                easing: "linear",
+                iterations: 1
+            });
+            
+            animation.onfinish = () => {
+                createFlame(money.style.left, window.innerHeight - 50);
+                money.remove();
+            };
+        }
+        
+        function createFlame(x, y) {
+            const flame = document.createElement("img");
+            flame.src = "flame.png"; // 替换为你的火焰图片
+            flame.classList.add("flame");
+            document.body.appendChild(flame);
+            flame.style.left = x;
+            flame.style.top = `${y}px`;
+            
+            setTimeout(() => flame.remove(), 800);
+        }
+        
+        setInterval(createMoney, 200);
+    </script>
+</body>
+</html>
